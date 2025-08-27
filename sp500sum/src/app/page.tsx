@@ -2,16 +2,40 @@
 
 
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [showNotFound, setNotFoundText] = useState(false);
+  const router = useRouter();
+  async function handleSearch (event: React.FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const res = await fetch(`http://127.0.0.1:8000/ticker/${query}`);
+      const data = await res.json();
+      if(data == null && !showNotFound)
+      {
+        toggleText();
+      }else if(data == null)
+      {
+        //do nuttin
+      }else if(data.detail == "Not Found" && !showNotFound)
+      {
+        toggleText();
+      }else if(data.detail == "Not Found")
+      {
+        //do nuttin
+      }else
+      {
+        toggleText();
+        router.push(`/info/${query}`);
+      }
 
-  const handleSearch = (e: React.FormEvent) => 
-  {
-    e.preventDefault();
-    console.log("Searching for:", query);
-    //call api
+      return data;
   };
+
+  function toggleText()
+  {
+    setNotFoundText(!showNotFound);
+  }
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -45,6 +69,10 @@ export default function Home() {
           </form>
 
         </div>
+        <div className="flex gap-4 items-center flex-row sm:flex-row">
+          {showNotFound && (<p className="mt-4">No ticker found</p>)}
+        </div>
+        
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
