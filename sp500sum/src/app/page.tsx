@@ -11,10 +11,10 @@ export default function Home() {
       event.preventDefault();
       const res = await fetch(`http://127.0.0.1:8000/ticker/${query}`);
       const data = await res.json();
-      if(data == null && !showNotFound)
+      if(data[0] == null && !showNotFound)
       {
         toggleText();
-      }else if(data == null)
+      }else if(data[0] == null)
       {
         //do nuttin
       }else if(data.detail == "Not Found" && !showNotFound)
@@ -28,7 +28,6 @@ export default function Home() {
         toggleText();
         router.push(`/info/${query}`);
       }
-
       return data;
   };
 

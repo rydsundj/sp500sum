@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
 export default function Info({ params }: { params: Promise<{ ticker: string }> }) {
   const { ticker } = React.use(params);
   const router = useRouter();
@@ -21,7 +20,7 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
 
   return (
     <div className="font-mono grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <h1>
+      <h1 className="text-3xl">
         <button onClick={() => router.push(`/`)}>Home</button>
       </h1>
 
@@ -33,7 +32,16 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
           </code>
           .
         </h1>
-        {info}
+        {info[0]}
+
+        <div className="font-mono text-2xl font-bold">
+          Open: {info[1]} <br></br>
+          Latest Close: {info[2]} <br></br>
+          Short Ratio: {info[3]} <br></br>
+        </div>
+
+        <div className="font-mono">
+        </div>
       </main>
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
