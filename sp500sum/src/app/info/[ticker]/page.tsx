@@ -1,7 +1,9 @@
 "use client";
-
+import MainChart from "../../components/mainchart";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+
 export default function Info({ params }: { params: Promise<{ ticker: string }> }) {
   const { ticker } = React.use(params);
   const router = useRouter();
@@ -41,6 +43,7 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
         </div>
 
         <div className="font-mono">
+          <MainChart />
         </div>
       </main>
 
