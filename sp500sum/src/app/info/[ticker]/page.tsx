@@ -1,24 +1,26 @@
 "use client";
+
 import MainChart from "../../components/mainchart";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-
 export default function Info({ params }: { params: Promise<{ ticker: string }> }) {
-  const { ticker } = React.use(params);
+  const { ticker } = React.use(params);   // ✅ unwraps params Promise
   const router = useRouter();
 
-
-  const [info, setInfo] = useState<string>("Loading...");
+  const [info, setInfo] = useState<any>(null);
 
   async function showInfo() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}`);
     const data = await res.json();
     setInfo(data);
   }
+
   useEffect(() => {
     showInfo();
-  }, []);
+  }, [ticker]);
+
+  if (!info) return <div>Loading...</div>;
 
   return (
     <div className="font-mono grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -34,16 +36,17 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
           </code>
           .
         </h1>
-        {info[0]}
+
+        <div>{info[0]}</div>
 
         <div className="font-mono text-2xl font-bold">
-          Open: {info[1]} <br></br>
-          Latest Close: {info[2]} <br></br>
-          Short Ratio: {info[3]} <br></br>
+          Open: {info[1]} <br />
+          Latest Close: {info[2]} <br />
+          Short Ratio: {info[3]} <br />
         </div>
 
         <div className="font-mono">
-          <MainChart />
+          <MainChart ticker={ticker} />
         </div>
       </main>
 
