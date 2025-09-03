@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Info({ params }: { params: Promise<{ ticker: string }> }) {
-  const { ticker } = React.use(params);   // ✅ unwraps params Promise
+  const { ticker } = React.use(params);
   const router = useRouter();
 
   const [info, setInfo] = useState<any>(null);

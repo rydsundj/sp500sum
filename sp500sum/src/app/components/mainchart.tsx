@@ -14,6 +14,7 @@ export default function MainChart({ ticker }: { ticker: string }) {
   async function showInitialChart() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/chart`);
     const chartData = await res.json();
+    console.log(chartData);
     setData(chartData);
   }
 
@@ -27,7 +28,7 @@ export default function MainChart({ ticker }: { ticker: string }) {
     <div className="flex justify-center">
       <LineChart width={750} height={450} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
         <Legend />
