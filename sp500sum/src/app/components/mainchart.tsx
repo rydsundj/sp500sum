@@ -14,7 +14,6 @@ export default function MainChart({ ticker }: { ticker: string }) {
   async function showInitialChart() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/chart`);
     const chartData = await res.json();
-    console.log(chartData);
     setData(chartData);
   }
 
