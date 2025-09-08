@@ -1,6 +1,7 @@
 "use client";
 
 import MainChart from "../../components/mainchart";
+import OptionsList from "../../components/optionslist";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +10,14 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
   const router = useRouter();
 
   const [info, setInfo] = useState<any>(null);
+
+  async function showOptionsList() 
+  {
+    const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/options`);
+    const data = await res.json();
+    setInfo(data);
+  }
+
 
   async function showInfo() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}`);
@@ -48,13 +57,16 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
         <div className="font-mono">
           <MainChart ticker={ticker} />
         </div>
-
-        <button className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800" onSubmit={router.push("/options")}>
-        <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-        Teal to Lime
-        </span>
-        </button>
-
+        <div className="w-full flex justify-center">
+          <button
+            className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
+            onClick={() => showOptionsList() }
+          >
+            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+              View option contracts
+            </span>
+          </button>
+        </div>
       </main>
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
