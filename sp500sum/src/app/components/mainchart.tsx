@@ -27,7 +27,13 @@ export default function MainChart({ ticker }: { ticker: string }) {
     <div className="flex justify-center">
       <LineChart width={750} height={450} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
+        <XAxis
+        dataKey="date"
+        tickFormatter={(date) => {
+          const d = new Date(date);
+          return `${d.getDate() + 1}/${d.getMonth()}`;
+        }}
+        />
         <YAxis />
         <Tooltip />
         <Legend />

@@ -1,7 +1,6 @@
 "use client";
 
 import MainChart from "../../components/mainchart";
-import OptionsList from "../../components/optionslist";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -10,14 +9,13 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
   const router = useRouter();
 
   const [info, setInfo] = useState<any>(null);
+  const [options, setOptions] = useState<any[] | null>(null);
 
-  async function showOptionsList() 
-  {
+  async function showOptionsList() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/options`);
     const data = await res.json();
-    setInfo(data);
+    setOptions(data);
   }
-
 
   async function showInfo() {
     const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}`);
@@ -57,15 +55,25 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
         <div className="font-mono">
           <MainChart ticker={ticker} />
         </div>
-        <div className="w-full flex justify-center">
+        <div className="w-full flex flex-col items-center">
           <button
-            className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
-            onClick={() => showOptionsList() }
+            className="relative inline-flex items-center justify-center p-0.5 mb-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
+            onClick={showOptionsList}
           >
             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
               View option contracts
             </span>
           </button>
+
+          {options && (
+            <ul className="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+              {options.map((opt, idx) => (
+                <li key={idx} className="py-2 border-b border-gray-300 dark:border-gray-600">
+                  {JSON.stringify(opt)}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </main>
 
