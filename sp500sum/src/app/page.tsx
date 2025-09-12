@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter();
   async function handleSearch (event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
-      const res = await fetch(`http://127.0.0.1:8000/ticker/${query}`);
+      const res = await fetch(`https://ticker-fetch-backend-production.up.railway.app/ticker/${query}`);
       const data = await res.json();
       if(data[0] == null && !showNotFound)
       {

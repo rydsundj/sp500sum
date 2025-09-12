@@ -10,22 +10,45 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
 
   const [info, setInfo] = useState<any>(null);
   const [options, setOptions] = useState<any[] | null>(null);
-
-  async function showOptionsList() {
-    const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/options`);
-    const data = await res.json();
-    setOptions(data);
-  }
+  const [showOptions, setShowOptions] = useState(false);
+  const [sortKey, setSortKey] = useState<string>("expirydate");
 
   async function showInfo() {
-    const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}`);
+    const res = await fetch(`https://ticker-fetch-backend-production.up.railway.app/ticker/${ticker}`);
     const data = await res.json();
     setInfo(data);
+  }
+
+  async function toggleOptionsList() {
+    if (!showOptions && !options) {
+      const res = await fetch(`https://ticker-fetch-backend-production.up.railway.app/ticker/${ticker}/options`);
+      const data = await res.json();
+      setOptions(data);
+    }
+    setShowOptions(!showOptions);
   }
 
   useEffect(() => {
     showInfo();
   }, [ticker]);
+
+  const getSortedOptions = () => {
+    if (!options) return [];
+  
+    return [...options].sort((a, b) => {
+      const aValue = a[sortKey];
+      const bValue = b[sortKey];
+  
+      if (aValue == null || bValue == null) return 0; 
+  
+      if (sortKey === "strike") {
+        return parseFloat(aValue) - parseFloat(bValue);
+      } else {
+        return String(aValue).localeCompare(String(bValue));
+      }
+    });
+  };
+  
 
   if (!info) return <div>Loading...</div>;
 
@@ -55,21 +78,40 @@ export default function Info({ params }: { params: Promise<{ ticker: string }> }
         <div className="font-mono">
           <MainChart ticker={ticker} />
         </div>
+
         <div className="w-full flex flex-col items-center">
           <button
             className="relative inline-flex items-center justify-center p-0.5 mb-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
-            onClick={showOptionsList}
+            onClick={toggleOptionsList}
           >
             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-              View option contracts
+              {showOptions ? "Hide option contracts" : "View option contracts"}
             </span>
           </button>
 
-          {options && (
-            <ul className="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-              {options.map((opt, idx) => (
+          {showOptions && (
+            <div className="mb-4 flex gap-4">
+              <button onClick={() => setSortKey("expirydate")} className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded">
+                Sort by Expiry Date
+              </button>
+              <button onClick={() => setSortKey("type")} className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded">
+                Sort by Type
+              </button>
+              <button onClick={() => setSortKey("strike")} className="px-3 py-1 bg-gray-300 dark:bg-gray-700 rounded">
+                Sort by Strike
+              </button>
+            </div>
+          )}
+
+          {showOptions && options && (
+            <ul className="w-full max-w-2xl bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+              {getSortedOptions().map((opt, idx) => (
                 <li key={idx} className="py-2 border-b border-gray-300 dark:border-gray-600">
-                  {JSON.stringify(opt)}
+                  <div className="grid grid-cols-3 gap-2 text-sm sm:text-base">
+                    <span><strong>Expiry:</strong> {opt.expirydate}</span>
+                    <span><strong>Type:</strong> {opt.type}</span>
+                    <span><strong>Strike:</strong> {opt.strike}</span>
+                  </div>
                 </li>
               ))}
             </ul>

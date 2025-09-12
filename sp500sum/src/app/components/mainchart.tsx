@@ -12,7 +12,7 @@ export default function MainChart({ ticker }: { ticker: string }) {
   const [data, setData] = useState<ChartData[]>([]);
 
   async function showInitialChart() {
-    const res = await fetch(`http://127.0.0.1:8000/ticker/${ticker}/chart`);
+    const res = await fetch(`https://ticker-fetch-backend-production.up.railway.app/ticker/${ticker}/chart`);
     const chartData = await res.json();
     setData(chartData);
   }
